@@ -1,8 +1,8 @@
-import path from 'path';
+const path = require( 'path' );
 
-module.exports = function yandexMetrika (options) {
+export default function yandexMetrika (moduleOptions) {
   // don't include on dev mode
-  if (!options.development && process.env.NODE_ENV !== 'production') {
+  if (!moduleOptions.development && process.env.NODE_ENV !== 'production') {
     return;
   }
 
@@ -16,7 +16,7 @@ module.exports = function yandexMetrika (options) {
   this.addPlugin({
     src: path.resolve(__dirname, 'plugin.js'),
     ssr: false,
-    options
+    options: moduleOptions
   });
 };
 
