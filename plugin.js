@@ -1,6 +1,6 @@
-let ready = false;
-
 const YANDEX_DISPATCH_KEY = 'ym';
+
+let ready = false;
 
 export default (context, inject) => {
   const pluginOptions = <%= JSON.stringify(options) %>;
@@ -12,14 +12,14 @@ export default (context, inject) => {
     ready = true
   });
 
-  const hasMetrika = window.Ya && window.Ya.Metrika;
   const boundCreate = create.bind( null, pluginOptions, context );
+  const registered = !!window[ YANDEX_DISPATCH_KEY ];
 
-  hasMetrika
+  registered
     ? boundCreate() // Yandex.Metrika API is already available.
     : register( boundCreate ); // Yandex.Metrika has not loaded yet, register a callback.
 
-  // test yandex metrika inject
+  // inject yandex metrika function
   inject( 'yandexMetrika', send );
 }
 
@@ -28,13 +28,15 @@ export default (context, inject) => {
  */
 function register (callback) {
   (function (r, a) {
-    r[i] = r[i] || function () {
-      ( r[i].a = r[i].a || [] ).push( arguments );
+    r[a] = r[a] || function () {
+      ( r[a].a = r[a].a || [] ).push( arguments );
     };
 
-    r[i].l = Date.now();
+    r[a].l = Date.now();
 
     console.log( 'registered' );
+
+    callback();
   })(window, 'ym');
 }
 
