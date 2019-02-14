@@ -1,7 +1,7 @@
 let ready = false;
 
 export default (context, inject) => {
-  const pluginOptions = <%= options %>;
+  const pluginOptions = <%= JSON.parse(JSON.stringify(options)) %>;
 
   const { app: { router } } = context;
 
