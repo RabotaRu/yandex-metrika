@@ -65,6 +65,8 @@ function create (pluginOptions, { app: { router } }) {
  */
 function hitToAll (counters = [], fromPath = '/', toPath = '/') {
   counters.forEach(counterId => {
+    console.log( `Hit to: ${counterId}. From: ${fromPath}. To: ${toPath}.` );
+
     window[ windowKey( counterId ) ].hit(toPath, {
       referer: fromPath
       // TODO: pass title: <new page title>
