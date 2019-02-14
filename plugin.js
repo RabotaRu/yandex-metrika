@@ -1,15 +1,13 @@
 const YANDEX_DISPATCH_KEY = 'ym';
 
-let ready = false;
-
 export default (context, inject) => {
-  const pluginOptions = <%= JSON.stringify(options) %>;
+  const pluginOptions = <%= serialize(options) %>;
 
   const { app: { router } } = context;
 
   router.onReady(() => {
     // Mark when the router has completed the initial navigation.
-    ready = true
+    // ready = true
   });
 
   const boundCreate = create.bind( null, pluginOptions, context );
@@ -62,11 +60,6 @@ function create (pluginOptions, { app: { router } }) {
 
   router.afterEach((to, from) => {
     console.log( 'afterEach:', from.fullPath, to.fullPath );
-    if (!ready) {
-      // don't record a duplicate hit for the initial navigation.
-      return;
-    }
-
     hitToAll( counters, from.fullPath, to.fullPath );
   });
 }
@@ -94,6 +87,6 @@ function hitToAll (counters = [], fromPath = '/', toPath = '/') {
  * @param args
  */
 function send (...args) {
-  console.log( '[Yandex.Metrika] send', ...args );
+  console.log( '[Yandex.Metrika] [Sent Arguments]:', ...args );
   window[ YANDEX_DISPATCH_KEY ]( ...args );
 }
