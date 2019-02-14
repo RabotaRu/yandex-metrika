@@ -25,6 +25,8 @@ export default (context, inject) => {
  * @param {Function} callback
  */
 function register (callback) {
+  console.log( 'register' );
+
   (function (w, c) {
     (w[c] = w[c] || []).push( callback )
   })(window, 'yandex_metrika_callbacks');
@@ -37,6 +39,8 @@ function register (callback) {
  * @param {Object|Vue.Router} router
  */
 function create (pluginOptions, { app: { router } }) {
+  console.log( 'create', pluginOptions );
+
   const counters = [].concat( pluginOptions.counters || [] );
   const { options = {} } = pluginOptions;
 
@@ -46,9 +50,12 @@ function create (pluginOptions, { app: { router } }) {
     window[ windowKey( counterId ) ] = new Ya.Metrika(
       JSON.stringify( options )
     );
+
+    console.log( 'metrika:', window[ windowKey( counterId ) ] );
   });
 
   router.afterEach((to, from) => {
+    console.log( 'afterEach:', from.fullPath, to.fullPath );
     if (!ready) {
       // don't record a duplicate hit for the initial navigation.
       return;
@@ -64,6 +71,8 @@ function create (pluginOptions, { app: { router } }) {
  * @param {string} toPath
  */
 function hitToAll (counters = [], fromPath = '/', toPath = '/') {
+  console.log( 'hitToAll:', counters, fromPath, toPath );
+
   counters.forEach(counterId => {
     console.log( `Hit to: ${counterId}. From: ${fromPath}. To: ${toPath}.` );
 
