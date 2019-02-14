@@ -1,0 +1,11 @@
+{
+  "name": "@rabota/yandex-metrika",
+  "version": "0.2.0",
+  "license": "MIT",
+  "repository": "https://github.com/RabotaRu/yandex-metrika",
+  "homepage": "https://github.com/RabotaRu/yandex-metrika/tree/master",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "index.js"
+}
