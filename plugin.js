@@ -1,5 +1,7 @@
 let ready = false;
 
+const YANDEX_DISPATCH_KEY = 'ym';
+
 export default (context, inject) => {
   const pluginOptions = <%= JSON.stringify(options) %>;
 
@@ -18,18 +20,22 @@ export default (context, inject) => {
     : register( boundCreate ); // Yandex.Metrika has not loaded yet, register a callback.
 
   // test yandex metrika inject
-  inject('yandexMetrika', (string) => console.log('That was easy!', string));
+  inject( 'yandexMetrika', send );
 }
 
 /**
  * @param {Function} callback
  */
 function register (callback) {
-  console.log( 'register' );
+  (function (r, a) {
+    r[i] = r[i] || function () {
+      ( r[i].a = r[i].a || [] ).push( arguments );
+    };
 
-  (function (w, c) {
-    (w[c] = w[c] || []).push( callback )
-  })(window, 'yandex_metrika_callbacks');
+    r[i].l = Date.now();
+
+    console.log( 'registered' );
+  })(window, 'ym');
 }
 
 /**
@@ -47,11 +53,9 @@ function create (pluginOptions, { app: { router } }) {
   counters.forEach(counterId => {
     options.id = counterId;
 
-    window[ windowKey( counterId ) ] = new Ya.Metrika(
-      JSON.stringify( options )
-    );
+    send( counterId, 'init', options );
 
-    console.log( 'metrika:', window[ windowKey( counterId ) ] );
+    console.log( 'metrika inited:', counterId );
   });
 
   router.afterEach((to, from) => {
@@ -76,7 +80,7 @@ function hitToAll (counters = [], fromPath = '/', toPath = '/') {
   counters.forEach(counterId => {
     console.log( `Hit to: ${counterId}. From: ${fromPath}. To: ${toPath}.` );
 
-    window[ windowKey( counterId ) ].hit(toPath, {
+    send(counterId, 'hit', toPath, {
       referer: fromPath
       // TODO: pass title: <new page title>
       // This will need special handling because router.afterEach is called *before* DOM is updated.
@@ -85,9 +89,9 @@ function hitToAll (counters = [], fromPath = '/', toPath = '/') {
 }
 
 /**
- * @param {number} counterId
- * @returns {string}
+ * @param args
  */
-function windowKey (counterId) {
-  return `yaCounter${counterId}`;
+function send (...args) {
+  console.log( '[Yandex.Metrika] send', ...args );
+  window[ YANDEX_DISPATCH_KEY ]( ...args );
 }
