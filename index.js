@@ -1,4 +1,4 @@
-const path = require( 'path' );
+import path from 'path';
 
 export default function yandexMetrika (moduleOptions) {
   // don't include on dev mode
