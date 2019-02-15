@@ -1,21 +1,4 @@
-import { ScriptLoader } from '@rabota/loader';
-
 const YANDEX_DISPATCH_KEY = 'ym';
-const YANDEX_METRIKA = 'https://mc.yandex.ru/metrika/tag.js';
-
-(function (r, a) {
-  r[a] = r[a] || function () {
-    ( r[a].a = r[a].a || [] ).push( arguments );
-  };
-
-  r[a].l = Date.now();
-
-  const loader = new ScriptLoader();
-  loader.retry( YANDEX_METRIKA ).catch(_ => {
-    console.log( 'loaded', r[ a ] );
-  });
-
-})(window, YANDEX_DISPATCH_KEY);
 
 export default (context, inject) => {
   const pluginOptions = <%= serialize(options) %>;
@@ -30,13 +13,25 @@ export default (context, inject) => {
   const boundCreate = create.bind( null, pluginOptions, context );
   const registered = !!window[ YANDEX_DISPATCH_KEY ];
 
-  if (registered) {
-    // Yandex.Metrika API is already available.
-    boundCreate();
-  }
+  registered
+    ? boundCreate()
+    : register( boundCreate );
 
   // inject yandex metrika function
   inject( 'yandexMetrika', send );
+}
+
+/**
+ * @param {Function} create
+ */
+function register (create) {
+  window[ YANDEX_DISPATCH_KEY ] = window[ YANDEX_DISPATCH_KEY ] || function() {
+    ( window[ YANDEX_DISPATCH_KEY ].a = window[ YANDEX_DISPATCH_KEY ].a || [] ).push( arguments );
+  };
+
+  window[ YANDEX_DISPATCH_KEY ].l = 1 * new Date();
+
+  create();
 }
 
 /**
