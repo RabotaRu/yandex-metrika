@@ -13,24 +13,17 @@ export default function yandexMetrika (moduleOptions) {
     (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
   `;
 
-  this.options.build.plugins.push({
-    apply (compiler) {
-      compiler.plugin('emit', (compilation, cb) => {
-
-        compilation.assets[ 'yandex-metrika' ] = {
-          source: () => metrikaContent,
-          size: () => metrikaContent.length
-        };
-
-        cb();
-      })
-    }
-  });
-
+  this.options.head.__dangerouslyDisableSanitizers = [ 'script' ];
   this.options.head.script.push({
-    src: require( '~/assets/yandex-metrika.js' ), // 'https://mc.yandex.ru/metrika/watch.js'
-    async: true
+    innerHTML: metrikaContent,
+    type: 'text/javascript',
+    charset: 'utf-8'
   });
+
+  /*this.options.head.script.push({
+    src: 'https://mc.yandex.ru/metrika/tag.js', // 'https://mc.yandex.ru/metrika/watch.js'
+    async: true
+  });*/
 
   // Add yandex metrika script to head
   /*this.options.head.script.push({

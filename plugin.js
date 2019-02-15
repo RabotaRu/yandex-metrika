@@ -13,25 +13,10 @@ export default (context, inject) => {
   const boundCreate = create.bind( null, pluginOptions, context );
   const registered = !!window[ YANDEX_DISPATCH_KEY ];
 
-  registered
-    ? boundCreate()
-    : register( boundCreate );
+  registered && boundCreate();
 
   // inject yandex metrika function
   inject( 'yandexMetrika', send );
-}
-
-/**
- * @param {Function} create
- */
-function register (create) {
-  window[ YANDEX_DISPATCH_KEY ] = window[ YANDEX_DISPATCH_KEY ] || function() {
-    ( window[ YANDEX_DISPATCH_KEY ].a = window[ YANDEX_DISPATCH_KEY ].a || [] ).push( arguments );
-  };
-
-  window[ YANDEX_DISPATCH_KEY ].l = 1 * new Date();
-
-  create();
 }
 
 /**
