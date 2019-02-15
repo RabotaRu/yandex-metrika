@@ -20,11 +20,6 @@ export default function yandexMetrika (moduleOptions) {
     charset: 'utf-8'
   });
 
-  /*this.options.head.script.push({
-    src: 'https://mc.yandex.ru/metrika/tag.js', // 'https://mc.yandex.ru/metrika/watch.js'
-    async: true
-  });*/
-
   // Add yandex metrika script to head
   /*this.options.head.script.push({
     src: 'https://mc.yandex.ru/metrika/tag.js', // 'https://mc.yandex.ru/metrika/watch.js'
