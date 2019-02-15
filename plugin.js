@@ -11,9 +11,10 @@ const YANDEX_METRIKA = 'https://mc.yandex.ru/metrika/tag.js';
   r[a].l = Date.now();
 
   const loader = new ScriptLoader();
-  loader.retry( YANDEX_METRIKA ).then(_ => {
+  loader.retry( YANDEX_METRIKA ).catch(_ => {
     console.log( 'loaded', r[ a ] );
   });
+
 })(window, YANDEX_DISPATCH_KEY);
 
 export default (context, inject) => {
