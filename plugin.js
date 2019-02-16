@@ -1,4 +1,4 @@
-import { YandexLayer } from "./analytics/yandex-layer";
+import { YandexLayer } from "@rabota/analytics-layer";
 
 export default async (context, inject) => {
   const registered = !!window[ 'ym' ];
