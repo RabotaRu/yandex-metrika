@@ -7,7 +7,7 @@
 This plugins automatically sends first page and route change events to yandex metrika.
 
 **Note:** yandex metrika is disabled in development mode by default.
-You can set `development` option to `true` to run Yandex Matrika in development mode.
+You can set `development` option to `true` to run Yandex Metrika in development mode.
 
 ## Setup
 - Add `@rabota/yandex-metrika` dependency using yarn or npm to your project
@@ -15,32 +15,40 @@ You can set `development` option to `true` to run Yandex Matrika in development 
 ```js
 {
   modules: [
-    [
-      '@rabota/yandex-metrika', {
-        counters: [ 5238xxxx, 5238xxxx ], // you can specify single OR multiple IDs
-        options: {
-          // webvisor: true,
-          // clickmap:true,
-          // trackLinks:true,
-          // accurateTrackBounce:true,
-        }
+    ['@rabota/yandex-metrika', {
+      development: true,
+      counters: [ 1234xxxx, ..., 4321xxxx ], // you can specify single OR multiple IDs
+      options: {
+        // webvisor: true,
+        // clickmap:true,
+        // trackLinks:true,
+        // accurateTrackBounce:true,
       }
-    ],
+    }]
   ]
 }
 ````
 
 ## Plugin options
 
-### `development` - set `true` if you want to run metrika in dev mode
+### `development` 
+```{boolean}``` set `true` if you want to run metrika in dev mode. By default metrika is disabled in dev mode.
 
-### `counters` - Array of counters IDs
+### `counters` 
+```{Array<number>|number}``` Array of counters IDs
 
-### `options`- Yandex Metrika [options](https://yandex.com/support/metrica/code/counter-initialize.xml)
+### `cdn` 
+```{boolean}``` Use CDN (default: `false`).
+
+### `options` 
+```{Object}``` Yandex Metrika [options](https://yandex.com/support/metrica/code/counter-initialize.xml)
+
 * `webvisor`
 * `clickmap`
 * `trackLinks`
+* `trackHash`
 * `accurateTrackBounce`
+* `defer`
 
 For more information:
 - [Documetation for Ya.Metrika](https://yandex.com/support/metrica/code/counter-initialize.xml)

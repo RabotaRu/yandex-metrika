@@ -6,25 +6,26 @@ export default function yandexMetrika (moduleOptions) {
     return;
   }
 
+  const useCDN = moduleOptions.cdn;
+  const libURL = !useCDN
+    ? 'https://mc.yandex.ru/metrika/tag.js'
+    : 'https://cdn.jsdelivr.net/npm/yandex-metrica-watch/tag.js';
+
+  // include metrika script content
   const metrikaContent = `
     (function(m,e,t,r,i,k,a){
      m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-     m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+     m[i].l=1*new Date();
+     k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "${libURL}", "ym");
   `;
 
   this.options.head.__dangerouslyDisableSanitizers = [ 'script' ];
-  this.options.head.script.push({
+  this.options.head.script.unshift({
     innerHTML: metrikaContent,
     type: 'text/javascript',
     charset: 'utf-8'
   });
-
-  // Add yandex metrika script to head
-  /*this.options.head.script.push({
-    src: 'https://mc.yandex.ru/metrika/tag.js', // 'https://mc.yandex.ru/metrika/watch.js'
-    async: true
-  });*/
 
   // register plugin
   this.addPlugin({

@@ -1,73 +1,61 @@
-const YANDEX_DISPATCH_KEY = 'ym';
+import { YandexLayer } from "./analytics/yandex-layer";
 
-export default (context, inject) => {
+export default async (context, inject) => {
+  const registered = !!window[ 'ym' ];
+
+  if (!registered) {
+    return;
+  }
+
   const pluginOptions = <%= serialize(options) %>;
+  const counters = await resolveCounters( pluginOptions.counters, context );
 
   const { app: { router } } = context;
-
-  router.onReady(() => {
-    // Mark when the router has completed the initial navigation.
-    // ready = true
-  });
-
-  const boundCreate = create.bind( null, pluginOptions, context );
-  const registered = !!window[ YANDEX_DISPATCH_KEY ];
-
-  registered && boundCreate();
-
-  // inject yandex metrika function
-  inject( 'yandexMetrika', send );
-}
-
-/**
- * Creates metrika with specific counters
- *
- * @param {Object} pluginOptions
- * @param {Object|Vue.Router} router
- */
-function create (pluginOptions, { app: { router } }) {
-  console.log( 'create', pluginOptions );
-
-  const counters = [].concat( pluginOptions.counters || [] );
   const { options = {} } = pluginOptions;
 
+  const yandexLayer = new YandexLayer( counters );
+
+  let ready = false;
+  router.onReady(() => {
+    // mark when the router has completed the initial navigation.
+    ready = true
+  });
+
+  // init each yandex counter
   counters.forEach(counterId => {
     options.id = counterId;
 
-    send( counterId, 'init', options );
-
-    console.log( 'metrika inited:', counterId );
+    yandexLayer.pushTo( counterId, 'init', options );
   });
 
   router.afterEach((to, from) => {
-    console.log( 'afterEach:', from.fullPath, to.fullPath );
-    hitToAll( counters, from.fullPath, to.fullPath );
-  });
-}
+    if (!ready) {
+      // don't record a duplicate hit for the initial navigation.
+      return
+    }
 
-/**
- * @param {number[]} counters
- * @param {string} fromPath
- * @param {string} toPath
- */
-function hitToAll (counters = [], fromPath = '/', toPath = '/') {
-  console.log( 'hitToAll:', counters, fromPath, toPath );
+    const fromPath = from.fullPath;
+    const toPath = to.fullPath;
 
-  counters.forEach(counterId => {
-    console.log( `Hit to: ${counterId}. From: ${fromPath}. To: ${toPath}.` );
-
-    send(counterId, 'hit', toPath, {
+    // send new page url with the referer to each counter
+    yandexLayer.pushAll('hit', toPath, {
       referer: fromPath
-      // TODO: pass title: <new page title>
-      // This will need special handling because router.afterEach is called *before* DOM is updated.
     });
   });
+
+  // inject yandex metrika layer into context
+  inject( 'ym', yandexLayer );
 }
 
 /**
- * @param args
+ * @param {number|string|Array<number|string>|Function} countersOrFn
+ * @param {*} context
+ * @return {Promise<*>}
  */
-function send (...args) {
-  console.log( '[Yandex.Metrika] [Sent Arguments]:', ...args );
-  window[ YANDEX_DISPATCH_KEY ]( ...args );
+async function resolveCounters (countersOrFn, context) {
+  if (typeof countersOrFn === 'function') {
+    return countersOrFn( context );
+  }
+
+  return [].concat( countersOrFn || [] );
 }
