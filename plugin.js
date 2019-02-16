@@ -15,12 +15,6 @@ export default async (context, inject) => {
 
   const yandexLayer = new YandexLayer( counters );
 
-  let ready = false;
-  router.onReady(() => {
-    // mark when the router has completed the initial navigation.
-    ready = true
-  });
-
   // init each yandex counter
   counters.forEach(counterId => {
     options.id = counterId;
@@ -29,11 +23,6 @@ export default async (context, inject) => {
   });
 
   router.afterEach((to, from) => {
-    if (!ready) {
-      // don't record a duplicate hit for the initial navigation.
-      return
-    }
-
     const fromPath = from.fullPath;
     const toPath = to.fullPath;
 
