@@ -1,7 +1,21 @@
 {
   "name": "@rabota/yandex-metrika",
-  "version": "0.5.6",
+  "description": "The most powerful module to work with Yandex Metrika in your Nuxt.js application",
+  "keywords": [
+    "vue", "vuejs", "nuxt",
+    "nuxt.js", "nuxtjs", "analytics",
+    "metrics", "metrika", "yandex",
+    "yandex metrika", "module",
+    "javascript",
+    "front-end",
+    "web"
+  ],
+  "version": "0.5.7",
   "license": "MIT",
+  "author": {
+    "name": "Alexander Belov",
+    "url": "https://github.com/IPRIT"
+  },
   "repository": "https://github.com/RabotaRu/yandex-metrika",
   "homepage": "https://github.com/RabotaRu/yandex-metrika/tree/master",
   "publishConfig": {
