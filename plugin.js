@@ -46,14 +46,21 @@ export default async (context, inject) => {
   layer.init( countersToInit );
 
   // subscribe to router events
+  let firstHit = true;
   router && router.afterEach((to, from) => {
     const fromPath = from.fullPath;
     const toPath = to.fullPath;
 
+    const options = {};
+
+    if (!firstHit) {
+      Object.assign(options, { referer: fromPath });
+    } else {
+      firstHit = false;
+    }
+
     // send new page url with the referer to each counter
-    layer.pushAll('hit', toPath, {
-      referer: fromPath
-    });
+    layer.pushAll( 'hit', toPath, options );
   });
 
   // inject yandex metrika layer into context
