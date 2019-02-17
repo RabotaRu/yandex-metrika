@@ -40,7 +40,7 @@ export default async (context, inject) => {
   }
 
   if (isDynamicIncludedCounters) {
-    countersToInit.push( includeCounters );
+    countersToInit.push( ...includeCounters );
   }
 
   layer.init( countersToInit );
