@@ -32,7 +32,7 @@ export default function yandexMetrika (moduleOptions) {
   }
 
   if (includeAdditionalCountersBoot) {
-    bootCounters.push( includeCounters );
+    bootCounters.push( ...includeCounters );
   }
 
   // yandex metrika init script
@@ -47,8 +47,8 @@ export default function yandexMetrika (moduleOptions) {
   // include counters init script
   metrikaContent += templateInitScripts( bootCounters, options );
 
-  this.options.head.__dangerouslyDisableSanitizers = [ 'script' ];
-  this.options.head.script = [].concat( this.options.head.script || [] ).unshift({
+  this.options.head.__dangerouslyDisableSanitizers = [ 'script', 'noscript' ];
+  this.options.head.script.unshift({
     innerHTML: metrikaContent,
     type: 'text/javascript',
     charset: 'utf-8'
