@@ -1,4 +1,5 @@
 import path from 'path';
+import { templateInitScripts, templateNoscriptInit } from "./utils";
 
 export default function yandexMetrika (moduleOptions) {
   // don't include on dev mode
@@ -9,7 +10,9 @@ export default function yandexMetrika (moduleOptions) {
   const {
     useCDN = false,
     noscript = true,
-    counter
+    counter,
+    includeCounters,
+    options
   } = moduleOptions;
 
   const libURL = !useCDN
@@ -17,8 +20,20 @@ export default function yandexMetrika (moduleOptions) {
     : 'https://cdn.jsdelivr.net/npm/yandex-metrica-watch/tag.js';
 
   const isDynamicCounter = typeof counter === 'function';
-  const includeInitContent = counter && !isDynamicCounter;
-  const includeNoscript = noscript && counter && !isDynamicCounter;
+  const isDynamicIncludedCounters = typeof includeCounters === 'function';
+
+  const includeCounterBoot = counter && !isDynamicCounter;
+  const includeAdditionalCountersBoot = includeCounters && !isDynamicIncludedCounters;
+
+  const bootCounters = [];
+
+  if (includeCounterBoot) {
+    bootCounters.push( counter );
+  }
+
+  if (includeAdditionalCountersBoot) {
+    bootCounters.push( includeCounters );
+  }
 
   // yandex metrika init script
   let metrikaContent = `
@@ -29,23 +44,8 @@ export default function yandexMetrika (moduleOptions) {
     (window, document, "script", "${libURL}", "ym");
   `;
 
-  // main counter init script
-  const metrikaInitContent = `
-    ym(${counter}, "init", {
-      id:52381765,
-      clickmap:true,
-      trackLinks:true,
-      accurateTrackBounce:true
-    });
-  `;
-
-  if (includeInitContent) {
-    metrikaContent += metrikaInitContent;
-  }
-
-  const noscriptContent = `
-    <div><img src="https://mc.yandex.ru/watch/${counter}" style="position:absolute; left:-9999px;" alt="" /></div>
-  `;
+  // include counters init script
+  metrikaContent += templateInitScripts( bootCounters, options );
 
   this.options.head.__dangerouslyDisableSanitizers = [ 'script' ];
   this.options.head.script = [].concat( this.options.head.script || [] ).unshift({
@@ -54,10 +54,17 @@ export default function yandexMetrika (moduleOptions) {
     charset: 'utf-8'
   });
 
-  if (includeNoscript) {
-    this.options.head.noscript = [].concat( this.options.head.noscript || [] ).unshift({
-      innerHTML: noscriptContent
+  // include noscript
+  if (noscript) {
+    const noscripts = bootCounters.map(id => {
+      return {
+        innerHTML: templateNoscriptInit( id )
+      };
     });
+
+    this.options.head.noscript = []
+      .concat( this.options.head.noscript || [] )
+      .concat( noscripts );
   }
 
   // register plugin

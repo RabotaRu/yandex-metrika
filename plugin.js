@@ -17,19 +17,36 @@ export default async (context, inject) => {
     logging = false
   } = pluginOptions;
 
+  const isDynamicCounter = typeof counter === 'function';
+  const isDynamicIncludedCounters = typeof includeCounters === 'function';
+
   // resolve all counters
-  includeCounters = await resolveCounters( includeCounters, context );
   counter = await resolveCounters( counter, context ).then(counters => {
     return counters && counters.length && counters[ 0 ];
   });
+  includeCounters = await resolveCounters( includeCounters, context );
 
+  // create analytics layer (interface for different services)
   const layer = new YandexLayer({
-    counter, includeCounters, logging, options
+    counter, includeCounters,
+    logging, options
   });
 
-  layer.init( includeCounters );
+  // assemble counters still not initialized
+  const countersToInit = [];
 
-  router.afterEach((to, from) => {
+  if (isDynamicCounter) {
+    countersToInit.push( counter );
+  }
+
+  if (isDynamicIncludedCounters) {
+    countersToInit.push( includeCounters );
+  }
+
+  layer.init( countersToInit );
+
+  // subscribe to router events
+  router && router.afterEach((to, from) => {
     const fromPath = from.fullPath;
     const toPath = to.fullPath;
 
