@@ -109,7 +109,7 @@ Sends arguments to each counter.
 
 ### `#pushTo`
 
-The same as `ym` [function](https://yandex.com/support/metrica/code/counter-initialize.html) of Yandex Metrika
+The same as `ym` [function](https://yandex.com/support/metrica/code/counter-initialize.html) of Yandex Metrika. 
 Sends arguments to specific counter.
 
 Rest `methods` or `properties` you can find here: [@rabota/analytics-layer/src/layer.js](https://github.com/RabotaRu/analytics-layer/blob/master/src/layer.js).
