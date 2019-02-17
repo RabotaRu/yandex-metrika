@@ -59,8 +59,12 @@ export default async (context, inject) => {
       firstHit = false;
     }
 
+    const restArgs = Object.keys( options ).length > 0
+      ? [ options ]
+      : [];
+
     // send new page url with the referer to each counter
-    layer.pushAll( 'hit', toPath, options );
+    layer.pushAll( 'hit', toPath, ...restArgs );
   });
 
   // inject yandex metrika layer into context
