@@ -49,9 +49,7 @@ export default function yandexMetrika (moduleOptions) {
 
   this.options.head.__dangerouslyDisableSanitizers = [ 'script', 'noscript' ];
   this.options.head.script.unshift({
-    innerHTML: metrikaContent.trim(),
-    type: 'text/javascript',
-    charset: 'utf-8'
+    innerHTML: metrikaContent.trim()
   });
 
   // include noscript
