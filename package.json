@@ -1,6 +1,6 @@
 {
   "name": "@rabota/yandex-metrika",
-  "version": "0.7.0",
+  "version": "0.7.2",
   "description": "The most powerful module to work with Yandex Metrika in your Nuxt.js application",
   "keywords": [
     "vue", "vuejs", "nuxt",
@@ -23,6 +23,6 @@
   },
   "main": "index.js",
   "dependencies": {
-    "@rabota/analytics-layer": "^0.3.0"
+    "@rabota/analytics-layer": "^0.4.0"
   }
 }
