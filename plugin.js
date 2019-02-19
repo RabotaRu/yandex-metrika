@@ -1,12 +1,6 @@
 import { YandexLayer } from "@rabota/analytics-layer";
 
 export default async (context, inject) => {
-  const registered = !!window[ 'ym' ];
-
-  if (!registered) {
-    return;
-  }
-
   const pluginOptions = <%= serialize(options) %>;
 
   const { app: { router } } = context;
@@ -17,6 +11,19 @@ export default async (context, inject) => {
     logging = false
   } = pluginOptions;
 
+  const layer = new YandexLayer({
+    logging, options
+  });
+
+  // inject yandex metrika layer into context
+  inject( 'ym', layer );
+
+  const isAvailable = typeof window !== 'undefined' && !!window[ layer.layerName ];
+
+  if (!isAvailable) {
+    return;
+  }
+
   const isDynamicCounter = typeof counter === 'function';
   const isDynamicIncludedCounters = typeof includeCounters === 'function';
 
@@ -24,13 +31,12 @@ export default async (context, inject) => {
   counter = await resolveCounters( counter, context ).then(counters => {
     return counters && counters.length && counters[ 0 ];
   });
+
   includeCounters = await resolveCounters( includeCounters, context );
 
-  // create analytics layer (interface for different services)
-  const layer = new YandexLayer({
-    counter, includeCounters,
-    logging, options
-  });
+  // set resolved counters
+  layer.setCounter( counter );
+  layer.setIncludedCounters( includeCounters );
 
   // assemble counters still not initialized
   const countersToInit = [];
@@ -66,9 +72,6 @@ export default async (context, inject) => {
     // send new page url with the referer to each counter
     layer.pushAll( 'hit', toPath, ...restArgs );
   });
-
-  // inject yandex metrika layer into context
-  inject( 'ym', layer );
 }
 
 /**
