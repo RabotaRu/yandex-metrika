@@ -8,7 +8,8 @@ export default async (context, inject) => {
     counter,
     includeCounters = [],
     options = {}, // yandex metrika options
-    logging = false
+    logging = false,
+    hitParams
   } = pluginOptions;
 
   const layer = new YandexLayer({
@@ -54,23 +55,26 @@ export default async (context, inject) => {
   // subscribe to router events
   let firstHit = true;
   router && router.afterEach((to, from) => {
-    const fromPath = from.fullPath;
-    const toPath = to.fullPath;
+    let fromPath = from.fullPath;
+    let toPath = to.fullPath;
 
     const options = {};
 
-    if (!firstHit) {
-      Object.assign(options, { referer: fromPath });
-    } else {
+    if (firstHit) {
+      // set referer to null when the first hit
+      fromPath = null;
       firstHit = false;
     }
 
-    const restArgs = Object.keys( options ).length > 0
-      ? [ options ]
-      : [];
+    const hasHitParamsFn = typeof hitParams === 'function';
+    const hitParams = hasHitParamsFn && hitParams( context );
+
+    if (hitParams) {
+      Object.assign(options, { params: hitParams });
+    }
 
     // send new page url with the referer to each counter
-    layer.pushAll( 'hit', toPath, ...restArgs );
+    layer.hit( toPath, fromPath, options );
   });
 }
 
