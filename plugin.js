@@ -67,10 +67,10 @@ export default async (context, inject) => {
     }
 
     const hasHitParamsFn = typeof hitParams === 'function';
-    const hitParams = hasHitParamsFn && hitParams( context );
+    const params = hasHitParamsFn && hitParams( context );
 
-    if (hitParams) {
-      Object.assign(options, { params: hitParams });
+    if (params) {
+      Object.assign(options, { params });
     }
 
     // send new page url with the referer to each counter
