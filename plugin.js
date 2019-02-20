@@ -55,8 +55,8 @@ export default async (context, inject) => {
   // subscribe to router events
   let firstHit = true;
   router && router.afterEach((to, from) => {
-    let fromPath = from.fullPath;
     let toPath = to.fullPath;
+    let fromPath = from.fullPath;
 
     const options = {};
 
