@@ -7,7 +7,7 @@ export default async (context, inject) => {
   let {
     staticCounters = [],
     dynamicCounters = [],
-    hitParams,
+    visitParams,
     manualFirstHit = false,
     logging = false,
   } = pluginOptions;
@@ -40,7 +40,8 @@ export default async (context, inject) => {
     let toPath = to.fullPath;
     let fromPath = from.fullPath;
 
-    const options = {};
+    const hasHitParamsFn = typeof visitParams === 'function';
+    const params = hasHitParamsFn && visitParams( context ) || visitParams;
 
     if (firstHit) {
       // set referer to null when the first hit
@@ -48,12 +49,12 @@ export default async (context, inject) => {
       firstHit = false;
 
       if (!manualFirstHit) {
-        return;
+        // send visit params instead
+        return layer.setParams( params );
       }
     }
 
-    const hasHitParamsFn = typeof hitParams === 'function';
-    const params = hasHitParamsFn && hitParams( context );
+    const options = {};
 
     if (params) {
       Object.assign(options, { params });
