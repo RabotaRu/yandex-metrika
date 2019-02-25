@@ -9,31 +9,15 @@ export default function yandexMetrika (moduleOptions) {
 
   const {
     useCDN = false,
+    staticCounters,
     noscript = true,
-    counter,
-    includeCounters,
-    options
   } = moduleOptions;
 
   const libURL = !useCDN
     ? 'https://mc.yandex.ru/metrika/tag.js'
     : 'https://cdn.jsdelivr.net/npm/yandex-metrica-watch/tag.js';
 
-  const isDynamicCounter = typeof counter === 'function';
-  const isDynamicIncludedCounters = typeof includeCounters === 'function';
-
-  const includeCounterBoot = counter && !isDynamicCounter;
-  const includeAdditionalCountersBoot = includeCounters && !isDynamicIncludedCounters;
-
-  const bootCounters = [];
-
-  if (includeCounterBoot) {
-    bootCounters.push( counter );
-  }
-
-  if (includeAdditionalCountersBoot) {
-    bootCounters.push( ...includeCounters );
-  }
+  const bootCounters = [].concat( staticCounters || [] );
 
   // yandex metrika init script
   let metrikaContent = `
@@ -45,7 +29,7 @@ export default function yandexMetrika (moduleOptions) {
   `;
 
   // include counters init script
-  metrikaContent += templateInitScripts( bootCounters, options );
+  metrikaContent += templateInitScripts( bootCounters );
 
   this.options.head.__dangerouslyDisableSanitizers = [ 'script', 'noscript' ];
   this.options.head.script.unshift({
@@ -54,9 +38,10 @@ export default function yandexMetrika (moduleOptions) {
 
   // include noscript
   if (noscript) {
-    const noscripts = bootCounters.map(id => {
+    const noscripts = bootCounters.map(counter => {
       return {
-        innerHTML: templateNoscriptInit( id )
+        innerHTML: templateNoscriptInit( counter ),
+        body: true
       };
     });
 

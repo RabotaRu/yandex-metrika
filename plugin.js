@@ -5,15 +5,15 @@ export default async (context, inject) => {
 
   const { app: { router } } = context;
   let {
-    counter,
-    includeCounters = [],
-    options = {}, // yandex metrika options
+    staticCounters = [],
+    dynamicCounters = [],
+    hitParams,
+    manualFirstHit = false,
     logging = false,
-    hitParams
   } = pluginOptions;
 
   const layer = new YandexLayer({
-    logging, options
+    logging, staticCounters
   });
 
   // inject yandex metrika layer into context
@@ -25,32 +25,14 @@ export default async (context, inject) => {
     return;
   }
 
-  const isDynamicCounter = typeof counter === 'function';
-  const isDynamicIncludedCounters = typeof includeCounters === 'function';
-
   // resolve all counters
-  counter = await resolveCounters( counter, context ).then(counters => {
-    return counters && counters.length && counters[ 0 ];
-  });
+  dynamicCounters = await resolveCounters( dynamicCounters, context );
 
-  includeCounters = await resolveCounters( includeCounters, context );
+  // set resolved dynamic counters
+  layer.setDynamicCounters( dynamicCounters );
 
-  // set resolved counters
-  layer.setCounter( counter );
-  layer.setIncludedCounters( includeCounters );
-
-  // assemble counters still not initialized
-  const countersToInit = [];
-
-  if (isDynamicCounter) {
-    countersToInit.push( counter );
-  }
-
-  if (isDynamicIncludedCounters) {
-    countersToInit.push( ...includeCounters );
-  }
-
-  layer.init( countersToInit );
+  // init dynamic counters
+  layer.init( dynamicCounters );
 
   // subscribe to router events
   let firstHit = true;
@@ -64,6 +46,10 @@ export default async (context, inject) => {
       // set referer to null when the first hit
       fromPath = null;
       firstHit = false;
+
+      if (!manualFirstHit) {
+        return;
+      }
     }
 
     const hasHitParamsFn = typeof hitParams === 'function';
