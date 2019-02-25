@@ -4,7 +4,7 @@
  */
 export function templateInitScript (options = {}) {
   return `
-    ym(${id}, 'init', ${JSON.stringify( options )});
+    ym(${options.id}, 'init', ${JSON.stringify( options )});
   `;
 }
 
