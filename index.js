@@ -19,8 +19,14 @@ export default function yandexMetrika (moduleOptions) {
 
   const bootCounters = [].concat( staticCounters || [] );
 
+  const date = new Date();
+
   // yandex metrika init script
   let metrikaContent = `
+    // @meta
+    // @rabota/yandex-metrika
+    // https://github.com/RabotaRu/yandex-metrika
+    // ${date.toISOString()}
     (function(m,e,t,r,i,k,a){
      m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
      m[i].l=1*new Date();
