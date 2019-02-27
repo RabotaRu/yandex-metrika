@@ -9,6 +9,7 @@ export default async (context, inject) => {
     dynamicCounters = [],
     visitParams,
     manualFirstHit = false,
+    firstHitVisitParams = false,
     logging = false,
   } = pluginOptions;
 
@@ -49,8 +50,12 @@ export default async (context, inject) => {
       firstHit = false;
 
       if (!manualFirstHit) {
-        // send visit params instead
-        return layer.setParams( params );
+        if (firstHitVisitParams) {
+          // send visit params
+          layer.setParams( params );
+        }
+
+        return;
       }
     }
 
