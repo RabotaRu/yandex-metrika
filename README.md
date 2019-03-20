@@ -38,19 +38,38 @@ You can set `development` option to `true` to run Yandex Metrika in development 
 
 ## Setup
 - Add `@rabota/yandex-metrika` dependency using yarn or npm to your project
+- Add `transpile` option to `build` section of `nuxt.config.js`
+```js
+transpile: [
+  '@rabota/analytics-layer',
+  '@rabota/yandex-metrika'
+]
+```
 - Add `@rabota/yandex-metrika` to `modules` section of `nuxt.config.js`
 ```js
 {
   modules: [
     ['@rabota/yandex-metrika', [
-      counter: 5876xxxx, // main counter
-      includeCounters: [ 1234xxxx, ..., 4321xxxx ], // additional IDs
-      options: {
-        defer: true, // required by single page applications
+      staticCounters: [{
+        id: 5432xxxx,
         webvisor: true,
         clickmap: true,
         trackLinks: true,
         accurateTrackBounce: true,
+      }],
+      dynamicCounters (context) {
+        // you can load it asynchronously and return promise
+        return [{
+          id: 1234xxxx,
+          clickmap: true,
+          trackLinks: true,
+          accurateTrackBounce: true,
+        }, {
+          id: 4567xxxx,
+          clickmap: true,
+          trackLinks: true,
+          accurateTrackBounce: true,
+        }];
       },
       noscript: true, // insert `noscript` content for each counter
       logging: true, // logs all events to each counter
@@ -62,25 +81,17 @@ You can set `development` option to `true` to run Yandex Metrika in development 
 
 ## Options
 
-### `counter` 
-```{number|Function}``` Counter ID
+### `staticCounters` 
+```{Object|Array<Object>}``` Object or Array of objects
 
-Could be an async function that returns an ID.
+Each object contains Yandex.Metrika options for target counter. `staticCounters` inserts YM initialization configs during the server rendering.
 
-### `includeCounters` 
-```{number|Array<number>|Function}``` Additional counters IDs
+### `dynamicCounters` 
+```{Function}``` 
 
-Could be an async function that returns one or array of IDs.
+Could be an async function that returns one or array of configs.
 
-### `options` 
-```{Object}``` Yandex Metrika [options](https://yandex.com/support/metrica/code/counter-initialize.xml)
-
-* `webvisor`
-* `clickmap`
-* `trackLinks`
-* `trackHash`
-* `accurateTrackBounce`
-* `defer`
+You can find all Yandex Metrika options [here](https://yandex.com/support/metrica/code/counter-initialize.xml)
 
 ### `noscript` 
 ```{boolean}``` Insert noscript content for each counter (default: `true`).
@@ -102,17 +113,7 @@ For more information:
 
 `this.$ym` - is a [Layer Instance](https://github.com/RabotaRu/analytics-layer).
 
-### `#pushAll`
-
-The same as `ym` [function](https://yandex.com/support/metrica/code/counter-initialize.html) of Yandex Metrika except you don't need provide any IDs as first argument.
-Sends arguments to each counter.
-
-### `#pushTo`
-
-The same as `ym` [function](https://yandex.com/support/metrica/code/counter-initialize.html) of Yandex Metrika. 
-Sends arguments to specific counter.
-
-Rest `methods` or `properties` you can find here: [@rabota/analytics-layer/src/layer.js](https://github.com/RabotaRu/analytics-layer/blob/master/src/layer.js).
+`methods` or `properties` you can find here: [@rabota/analytics-layer/src/layer.js](https://github.com/RabotaRu/analytics-layer/blob/master/src/layer.js).
 
 ## Examples
 
@@ -121,7 +122,7 @@ After [setup](#setup) you can access the metrika through `this.$ym` instance in 
 ```js
 export default {
   mounted () {
-    this.$ym.pushAll( 'reachGoal', 'event-name', params );
+    this.$ym.event( 'event-name', params );
   }
 }
 ```
@@ -131,7 +132,7 @@ Or you can send to a specific counter ID
 ```js
 export default {
   mounted () {
-    this.$ym.pushTo( 1234xxxx, 'reachGoal', 'event-name', params );
+    this.$ym.eventTo( 1234xxxx, 'event-name', params );
   }
 }
 ```
