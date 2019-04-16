@@ -1,5 +1,5 @@
 import path from 'path';
-import { templateInitScripts, templateNoscriptInit } from "./utils";
+import { templateInitScripts2, templateNoscriptInit } from "./utils";
 
 export default function yandexMetrika (moduleOptions) {
   // don't include on dev mode
@@ -19,23 +19,7 @@ export default function yandexMetrika (moduleOptions) {
 
   const bootCounters = [].concat( staticCounters || [] );
 
-  const date = new Date();
-
-  // yandex metrika init script
-  let metrikaContent = `
-    // @meta
-    // @rabota/yandex-metrika
-    // https://github.com/RabotaRu/yandex-metrika
-    // ${date.toISOString()}
-    (function(m,e,t,r,i,k,a){
-     m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-     m[i].l=1*new Date();
-     k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-    (window, document, "script", "${libURL}", "ym");
-  `;
-
-  // include counters init script
-  metrikaContent += templateInitScripts( bootCounters );
+  const metrikaContent = templateInitScripts2( bootCounters, libURL );
 
   this.options.head.__dangerouslyDisableSanitizers = [ 'script', 'noscript' ];
   this.options.head.script.unshift({
