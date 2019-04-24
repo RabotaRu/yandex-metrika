@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@rabota/analytics-layer@^0.7.3":
-  version "0.7.3"
-  resolved "https://registry.yarnpkg.com/@rabota/analytics-layer/-/analytics-layer-0.7.3.tgz#c9ce888f55748fc2b94978c32b10d4c58d96b7ba"
-  integrity sha512-g7yX3L+ZOkXI27dmpn9wbNaQP6S95G/qylZJatm9zQQsuxL2kbUalGF0QgikDCg6tezCPNLiU1QQQ5UpgvOBcA==
+"@rabota/analytics-layer@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@rabota/analytics-layer/-/analytics-layer-0.8.0.tgz#2319953db975da0cc1959604473a31cb8628b756"
+  integrity sha512-otBSD5G1lGXBBLGChSLXAdxObi+0QZ20OtQlbrrR1u8vVadJjOEyGh9tYY8KnL9/97+oCoVP4G1QzAzzR4ejCg==
